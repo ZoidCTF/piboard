@@ -1,0 +1,26 @@
+Background photos (cropped to 1920x1080, colour-muted and darkened for the dashboard)
+
+knox-panorama.jpg
+  "Kelowna From Knox Mountain Panorama" by Darren Kirby, CC BY-SA 3.0
+  https://commons.wikimedia.org/wiki/File:Kelowna_From_Knox_Mountain_Panorama.jpg
+
+okanagan-valley.jpg
+  "Okanagan Valley" by xlibber, CC BY 2.0
+  https://commons.wikimedia.org/wiki/File:Okanagan_Valley_(7631693050).jpg
+
+osoyoos-vineyards.jpg
+  "Vineyards and Lake- Osoyoos in the Okanagan Valley" by McKay Savage, CC BY 2.0
+  https://commons.wikimedia.org/wiki/File:Vineyards_and_Lake-_Osoyoos_in_the_Okanagan_Valley.jpg
+
+knox-view.jpg
+  "Kelowna view from Knox Mtn" by Sunny Goel, CC BY 2.0
+  https://commons.wikimedia.org/wiki/File:Kelowna_view_from_Knox_Mtn.jpg
+
+naramata-bench.jpg
+  "Okanagan Lake from the Naramata Bench" by Becks, CC BY 2.0
+  https://commons.wikimedia.org/wiki/File:Okanagan_Lake_from_the_Naramata_Bench_(7631780744).jpg
+
+dilworth-view.jpg
+  City of Kelowna parks banner, © City of Kelowna
+  Not openly licensed; private home display only.
+  https://www.kelowna.ca/

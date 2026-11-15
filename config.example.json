@@ -1,0 +1,77 @@
+{
+  "title": "Our Place",
+  "accent": "#ffb45c",
+  "host": "127.0.0.1",
+  "port": 8080,
+  "timezone": "America/Vancouver",
+  "clock_24h": false,
+  "reload_at": "03:00",
+  "poll_seconds": 60,
+  "weather": {
+    "latitude": 49.888,
+    "longitude": -119.496
+  },
+  "calendar": {
+    "urls": [
+      {
+        "url": "https://calendar.google.com/calendar/ical/en.canadian%23holiday%40group.v.calendar.google.com/public/basic.ics",
+        "holidays": {
+          "region": "British Columbia",
+          "observances": ["Halloween", "Christmas Eve", "New Year's Eve", "Valentine's Day", "Mother's Day", "Father's Day"],
+          "rename": {"Civic/Provincial Day": "BC Day"}
+        }
+      }
+    ],
+    "weeks": 3
+  },
+  "currency": {
+    "base": "CAD",
+    "symbols": ["USD", "EUR", "JPY"]
+  },
+  "wotd": {
+    "feed": "https://www.merriam-webster.com/wotd/feed/rss2"
+  },
+  "map": {
+    "url": "https://earth.nullschool.net/#current/wind/surface/level/overlay=temp/orthographic=-119.50,49.89,1500",
+    "reload_minutes": 60
+  },
+  "photos": {
+    "folder": "photos",
+    "rotate_minutes": 10
+  },
+  "ambience": {
+    "sky": true,
+    "weather": true
+  },
+  "seasonal": {
+    "collection": []
+  },
+  "home_assistant": {
+    "url": "",
+    "token": "",
+    "climate": ["climate.upstairs", "climate.downstairs"],
+    "co2": "sensor.living_room_carbon_dioxide",
+    "co2_limit": 1000,
+    "leaks": [{"entity": "binary_sensor.water_leak_sensor", "name": "Laundry"}],
+    "doors": ["binary_sensor.fridge_door", "binary_sensor.freezer_door"],
+    "door_minutes": 3,
+    "ovens": [{"name": "Oven", "power": "switch.oven_power", "temp": "sensor.oven_temperature"}],
+    "oven_minutes": 90,
+    "alarm": "alarm_control_panel.home",
+    "chargers": [{"name": "Car", "power": "sensor.wall_connector_power", "energy": "sensor.wall_connector_session_energy"}],
+    "doorbell": {"ring": "event.doorbell_ring", "package": "event.doorbell_package", "camera": "camera.doorbell", "package_camera": "camera.doorbell_package"}
+  },
+  "night": {
+    "start": "22:00",
+    "end": "06:00",
+    "dim": 0.7,
+    "hide_map": true
+  },
+  "refresh_minutes": {
+    "weather": 15,
+    "air": 30,
+    "calendar": 10,
+    "wotd": 1440,
+    "fx": 180
+  }
+}

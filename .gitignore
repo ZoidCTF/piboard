@@ -1,0 +1,17 @@
+# Holds the secret calendar URL
+config.json
+
+.venv/
+cache/
+__pycache__/
+*.pyc
+
+photos/*
+!photos/.gitkeep
+!photos/CREDITS.txt
+
+# Local dev launcher (machine-specific paths)
+.claude/launch.json
+
+# Generated CAD output (python hardware/mount.py)
+hardware/out/

@@ -1,0 +1,6 @@
+Bundled third-party assets
+
+icons/*.svg  Meteocons by Bas Milius, MIT licence (see icons/LICENSE)
+             https://github.com/basmilius/weather-icons
+fonts/roboto-*.woff2  Roboto by Google, Apache License 2.0 (via @fontsource/roboto; see fonts/LICENSE-Roboto.txt)
+fonts/cormorant-garamond-*.woff2  Cormorant Garamond by Christian Thalmann, SIL Open Font License 1.1 (via @fontsource/cormorant-garamond; see fonts/OFL-CormorantGaramond.txt)

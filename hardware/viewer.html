@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mount Viewer</title>
+<style>
+  :root { --bg: #f4f5f7; --fg: #1d2129; --panel: rgba(255, 255, 255, 0.9); }
+  @media (prefers-color-scheme: dark) { :root { --bg: #15181d; --fg: #e6e8eb; --panel: rgba(30, 34, 40, 0.9); } }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); font: 14px system-ui, sans-serif; overflow: hidden; }
+  #ui { position: fixed; top: 12px; left: 12px; background: var(--panel); padding: 10px 14px; border-radius: 10px; max-width: 280px; }
+  #ui h1 { font-size: 15px; margin: 0 0 6px; }
+  #ui label { display: block; margin: 3px 0; cursor: pointer; }
+  #ui .views button { margin: 6px 4px 0 0; }
+  #ui p { margin: 6px 0 0; opacity: 0.7; font-size: 12px; }
+</style>
+</head>
+<body>
+<div id="ui">
+  <h1>Pi monitor wall mount</h1>
+  <div id="toggles"></div>
+  <label>Explode <input id="explode" type="range" min="0" max="100" value="0"></label>
+  <div class="views">
+    <button data-view="back">Back</button>
+    <button data-view="side">Side</button>
+    <button data-view="inside">Inside</button>
+    <button data-view="exploded">Angled</button>
+  </div>
+  <p>Drag to rotate, scroll to zoom, right-drag to pan. Monitor and Pi are reference shapes only.</p>
+</div>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { STLLoader } from "three/addons/loaders/STLLoader.js";
+
+// Monitor frame: X right (seen from the back), Y up, Z towards the wall.
+// explode: how far (mm, along Z) each part moves when the Explode slider is at full.
+const PARTS = [
+  { file: "asm-monitor.stl", name: "Monitor", color: 0x3a3f47, opacity: 0.45, on: true, explode: -140 },
+  { file: "asm-tray.stl", name: "Tray", color: 0xe9eaee, on: true, explode: 0 },
+  { file: "asm-pi.stl", name: "Raspberry Pi 5", color: 0x2e9b4f, on: true, explode: -70 },
+  { file: "asm-fan-bracket.stl", name: "Fan bracket", color: 0xf09a3e, on: true, explode: -105 },
+  { file: "asm-fan.stl", name: "Fan", color: 0x222222, on: true, explode: -120 },
+  { file: "asm-stand.stl", name: "Monitor stand (flipped up)", color: 0x6b7078, opacity: 0.6, on: true, explode: -140 },
+  { file: "asm-tray-cleat.stl", name: "Tray cleat", color: 0xf09a3e, on: true, explode: 60 },
+  { file: "asm-wall-cleat.stl", name: "Wall cleat", color: 0xe0662a, on: true, explode: 130 },
+  { file: "asm-spacer.stl", name: "Spacer", color: 0xf09a3e, on: true, explode: 60 },
+];
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(devicePixelRatio);
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue("--bg").trim());
+const camera = new THREE.PerspectiveCamera(35, innerWidth / innerHeight, 1, 5000);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 110, 20);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x445566, 1.6));
+const sun = new THREE.DirectionalLight(0xffffff, 1.4);
+sun.position.set(300, 500, 600);
+scene.add(sun);
+
+const VIEWS = {
+  back: [350, 330, 950],
+  side: [950, 120, 20],
+  exploded: [700, 380, 500],
+  inside: [-360, 260, -700],
+};
+function setView(name) {
+  camera.position.set(...VIEWS[name]);
+  controls.update();
+}
+setView("back");
+document.querySelectorAll("[data-view]").forEach((b) => b.addEventListener("click", () => setView(b.dataset.view)));
+
+const meshes = [];
+let explodeAmount = 0;
+document.getElementById("explode").addEventListener("input", (e) => {
+  explodeAmount = e.target.value / 100;
+  for (const m of meshes) m.position.z = m.userData.explode * explodeAmount;
+});
+
+const loader = new STLLoader();
+const toggles = document.getElementById("toggles");
+for (const p of PARTS) {
+  loader.load(p.file, (geo) => {
+    geo.computeVertexNormals();
+    const mat = new THREE.MeshStandardMaterial({ color: p.color, roughness: 0.6, metalness: 0.05,
+      transparent: !!p.opacity, opacity: p.opacity || 1, depthWrite: !p.opacity });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.visible = p.on;
+    mesh.userData.explode = p.explode;
+    mesh.position.z = p.explode * explodeAmount;
+    meshes.push(mesh);
+    scene.add(mesh);
+    const label = document.createElement("label");
+    label.innerHTML = `<input type="checkbox" ${p.on ? "checked" : ""}> ${p.name}`;
+    label.querySelector("input").addEventListener("change", (e) => { mesh.visible = e.target.checked; });
+    toggles.appendChild(label);
+  });
+}
+
+addEventListener("resize", () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+renderer.setAnimationLoop(() => {
+  controls.update();
+  renderer.render(scene, camera);
+});
+</script>
+</body>
+</html>
