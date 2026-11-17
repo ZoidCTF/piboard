@@ -43,7 +43,10 @@ function fmtTime(iso, hourOnly = false) {
 
 async function getJSON(path) {
   const res = await fetch(path, { cache: "no-store" });
-  if (!res.ok) throw new Error(`${path}: HTTP ${res.status}`);
+  if (!res.ok) {
+    res.body?.cancel(); // release the response (see the ping in tick())
+    throw new Error(`${path}: HTTP ${res.status}`);
+  }
   return res.json();
 }
 
@@ -101,7 +104,9 @@ function tick() {
     lastMinute = now.getMinutes();
     updateSky(now);
     // Heartbeat for bin/kiosk.sh: it restarts Chromium if the page never loads or freezes.
-    fetch("/api/ping", { cache: "no-store" }).catch(() => {});
+    // Read the (tiny) body: Chromium keeps a 2 MB shared-memory buffer open for each
+    // unread response, and a renderer that runs out of file handles goes white.
+    fetch("/api/ping", { cache: "no-store" }).then((r) => r.text()).catch(() => {});
   }
   updateNight(now);
   maybeReload(now);

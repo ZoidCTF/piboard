@@ -4,7 +4,7 @@ A self-hosted wall dashboard for a Raspberry Pi 5 driving a 1920×1080 screen. S
 
 - `server/` is a stdlib Python HTTP server. It fetches weather (Open-Meteo), the calendar (iCal), the word of the day (Merriam-Webster RSS) and currency rates (Frankfurter, with open.er-api.com as a fallback) on a schedule, and caches the last good result in `cache/`.
 - `web/` holds the full-screen page. It polls `/api/*` and keeps showing old data if a request fails.
-- `bin/kiosk.sh` waits for the server, then keeps Chromium running in kiosk mode. The page pings `/api/ping` once a minute; if it goes silent for two minutes (a blank page after a busy boot, or a frozen tab), the script restarts Chromium.
+- `bin/kiosk.sh` waits for the server, then keeps Chromium running in kiosk mode. It restarts Chromium when the page stops pinging `/api/ping` for two minutes (a blank page after a busy boot, or a frozen tab), when a Chromium renderer nears its open-file limit (each unread fetch response holds a 2 MB shared-memory handle, and at 1024 the screen goes white; the page reads every response, so this is a safety net), or when the screen is all white twice in a row. Chromium's errors go to `~/.cache/piboard-chromium.log`, with the previous run's kept as `.log.1`.
 - `install.sh` sets up the venv, the systemd service, desktop autostart, autologin and no screen blanking. It's safe to re-run.
 
 ## Install on the Pi
